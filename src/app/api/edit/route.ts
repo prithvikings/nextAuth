@@ -1,3 +1,4 @@
+import authoptions from "@/lib/auth";
 import uploadOnCloudinary from "@/lib/cloudinary";
 import dbConnect from "@/lib/db";
 import { User } from "@/model/user.model";
@@ -7,7 +8,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     await dbConnect();
-    const session = await getServerSession();
+    const session = await getServerSession(authoptions);
     if (!session || !session.user || !session.user.email) {
       return NextResponse.json(
         {
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
     const name = formdata.get("name") as string;
     const file = formdata.get("file") as Blob | null;
 
-    let imageUrl = session.user.image as string | null;
+    let imageUrl;
 
     if (file) {
       imageUrl = await uploadOnCloudinary(file);

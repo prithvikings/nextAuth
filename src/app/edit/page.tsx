@@ -1,5 +1,4 @@
 "use client";
-import { useSession } from "next-auth/react";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { CgProfile } from "react-icons/cg";
