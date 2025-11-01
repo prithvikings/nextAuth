@@ -16,17 +16,26 @@ const authoptions: NextAuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
+
+
       async authorize(credentials, req) {
         const email = credentials?.email;
         const password = credentials?.password;
+
+
         if (!email || !password) {
           throw new Error("Please enter email and password");
         }
+
         await dbConnect();
         const user = await User.findOne({ email: email });
-        if (!user) {
-          throw new Error("No user found with this email");
-        }
+        console.log(user);
+
+  if (!user) throw new Error("No user found with this email");
+  if (!user.password) throw new Error("User registered with Google, not password");
+
+
+
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
         if (!isPasswordCorrect) {
           throw new Error("Incorrect password");
@@ -38,14 +47,13 @@ const authoptions: NextAuthOptions = {
             image: user.image,
         };
       },
+
+
+
     }),
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }),
-    Github({
-      clientId: process.env.GITHUB_ID as string,
-      clientSecret: process.env.GITHUB_SECRET as string,
     }),
   ],
   callbacks: {
@@ -59,6 +67,7 @@ const authoptions: NextAuthOptions = {
                 name:user.name,
                 email:user.email,
               })
+              await existingUser.save();
             }
             user.id=existingUser._id as string;
         }
@@ -92,12 +101,12 @@ const authoptions: NextAuthOptions = {
   session: {
     //we can configure session here
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
     //custom pages can be added here like sign in sign out error etc
-    signIn: "/auth/signin",
-    error: "/auth/signin",
+    signIn: "/signin",
+    error: "/signin",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
