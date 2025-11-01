@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -17,6 +16,7 @@ const signin = () => {
         password,
         redirect: false,
       });
+      console.log(result);
       router.push("/");
     } catch (error) {
       console.log(error);
@@ -62,9 +62,9 @@ const signin = () => {
         </form>
 
         <div className="flex items-center gap-[5px] justify-center my-5">
-          <hr className="flex-grow border-gray-500" />
+          <hr className="grow border-gray-500" />
           <span>OR</span>
-          <hr className="flex-grow border-gray-500" />
+          <hr className="grow border-gray-500" />
         </div>
 
         <button

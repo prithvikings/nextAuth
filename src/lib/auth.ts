@@ -50,6 +50,22 @@ const authoptions: NextAuthOptions = {
   ],
   callbacks: {
     //add callbacks here they are used to control what happens when an action is performed
+    async signIn({account,user}) {
+        if(account?.provider=="google"){
+            await dbConnect();
+            let existingUser=await User.findOne({email:user.email});
+            if(!existingUser){
+              existingUser= new User({
+                name:user.name,
+                email:user.email,
+              })
+            }
+            user.id=existingUser._id as string;
+        }
+        return true;
+    },
+
+
     async jwt({token,user}){
         if(user){
             token.id=user.id;
@@ -85,4 +101,6 @@ const authoptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+
 export default authoptions;
